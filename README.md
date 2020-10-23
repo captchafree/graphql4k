@@ -1,12 +1,12 @@
 # GraphQL4k
 
-GraphQL4k makes it easy to define executable graphql schemas in Kotlin. This library is powered by the [GraphQL Java](https://github.com/graphql-java/graphql-java) project
+GraphQL4k makes it easy to define executable graphql schemas in Kotlin. This library is powered by the [graphql-java](https://github.com/graphql-java/graphql-java) project
 
 Features:
 
 - Simple, declarative api using Kotlin's [Type-Safe Builders](https://kotlinlang.org/docs/reference/type-safe-builders.html)
 - Plays nice with DI frameworks (Guice, Spring, etc.)
-- Interactive terminal output. Easily find where each field's data fetcher is defined in the source code!
+- Interactive terminal output. Easily find where each field's data fetcher is defined in the source code
 
 Contents:
 
@@ -27,7 +27,7 @@ Contents:
     }
 
     // Parse the module and build a graphQL kit. By default the schema is built
-    // by searching for .graphqls files in the classpath's resources directory
+    // by searching for resources in the classpath with the .graphqls file extension
     val (builder, _) = buildGraphQLKit(module)
 
     // Build the graphql engine and optionally specify additional behavior
@@ -79,6 +79,7 @@ Contents:
         
         scalar(/* scalar implementation */)
         directive("customDirectiveName", /* directive implementation */)
+        typeResolver("typeName", /* type resolver implementation */)
     }
 
 
@@ -126,7 +127,7 @@ Contents:
 
 ## Using Dependency Injection
 
-You can also provide an `InstanceFactory` to manage your dependencies.
+You can provide an `InstanceFactory` to manage your dependencies.
 
 ```kotlin
     /* Example using Guice */
@@ -166,7 +167,7 @@ You can also provide an `InstanceFactory` to manage your dependencies.
 
 ## Composing Modules
 
-The building block of GraphQL4k is a *module*. Modules can be combined to create complex graphql schemas.
+The building block of GraphQL4k is a **module**. Modules can be combined to create complex graphql schemas.
 
 ```kotlin
     // Define a module using the `graphQLModule` function
