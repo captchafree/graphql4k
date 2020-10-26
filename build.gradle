@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'maven'
 }
 
 group 'dev.6Sides'
@@ -8,6 +10,12 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'MainKt'
+    }
 }
 
 dependencies {
@@ -22,8 +30,6 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine:2.8.6'
 }
 
-wrapper { gradleVersion = '6.7' }
-
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
@@ -34,4 +40,9 @@ compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+wrapper {
+    gradleVersion = "6.7"
+    distributionType = Wrapper.DistributionType.ALL
 }
