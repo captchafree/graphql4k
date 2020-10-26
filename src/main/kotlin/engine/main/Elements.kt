@@ -39,6 +39,16 @@ data class GraphQLTypeWiringElement(
     }
 }
 
+data class GraphQLTypeBindingWiringElement(
+    override val sourceLocation: StackTraceElement,
+    val typeName: String,
+    val module: GraphQLTypeModule
+) : GraphQLWiringElement(sourceLocation) {
+    override fun <T> accept(visitor: GraphQLWiringDefinitionVisitor<T>) {
+        return visitor.visit(this)
+    }
+}
+
 data class GraphQLFieldWiringElement(
     override val sourceLocation: StackTraceElement,
     val typeName: String,
@@ -108,6 +118,7 @@ interface GraphQLWiringDefinitionVisitor<T> {
 
     fun visit(element: GraphQLWiringModuleElement) {}
     fun visit(element: GraphQLTypeWiringElement) {}
+    fun visit(element: GraphQLTypeBindingWiringElement) {}
     fun visit(element: GraphQLFieldWiringElement) {}
     fun visit(element: GraphQLDataLoaderWiringElement<*,*>) {}
     fun visit(element: GraphQLScalarWiringElement) {}

@@ -58,6 +58,16 @@ class GraphQLWiringBuilder(blueprintRegistry: GraphQLBlueprintRegistry) : GraphQ
     }
 
 
+    inline fun <reified T : GraphQLTypeModule> bindType(typeName: String) {
+        bindType(typeName, getInstance<T>())
+    }
+
+    fun <T : GraphQLTypeModule> bindType(typeName: String, module: T) {
+        blueprintRegistry.addDefinition(GraphQLTypeBindingWiringElement(getCallerCodePosition(), typeName, module))
+        module.install(typeName, blueprintRegistry)
+    }
+
+
     fun type(typeName: String, init: GraphQLTypeBuilder.() -> Unit) {
         blueprintRegistry.addDefinition(GraphQLTypeWiringElement(getCallerCodePosition(), typeName))
         GraphQLTypeBuilder(blueprintRegistry, typeName).init()
