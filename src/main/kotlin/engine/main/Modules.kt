@@ -80,7 +80,7 @@ abstract class GraphQLTypeModule {
 
         GraphQLKit.typeModule(typeName) {
             functions.forEach { (name, df) ->
-                // If you are looking for a field definition and got directed here I have bad news...
+                // Accurate field definitions only work when using the `type()` function
                 // Source code location lookup doesn't work for GraphQLTypeModules yet. Any datafetcher defined
                 // in one will direct you here.
                 field(name, df)
