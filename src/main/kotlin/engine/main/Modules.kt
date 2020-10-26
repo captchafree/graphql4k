@@ -5,6 +5,7 @@ import graphql.schema.DataFetchingEnvironment
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.starProjectedType
+import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 
@@ -38,6 +39,8 @@ abstract class GraphQLTypeModule {
     }
 
     private fun parseFunction(func: KFunction<*>): Pair<String, DataFetcher<*>> {
+
+        func.isAccessible = true
 
         // Function returns a datafetcher
         if (DataFetcher::class.java.isAssignableFrom(func.returnType.jvmErasure.java)) {

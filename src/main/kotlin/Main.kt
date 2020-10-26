@@ -22,7 +22,7 @@ class SampleModule : GraphQLModule() {
 class TestTypeModule : GraphQLTypeModule() {
 
     @GraphQLDataFetcher
-    fun ping() = DataFetcher<String> {
+    private fun ping() = DataFetcher<String> {
         "pong!!!"
     }
 

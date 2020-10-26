@@ -1,20 +1,35 @@
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.4.10'
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
-    id 'maven'
+    id 'maven-publish'
 }
 
 group 'dev.6Sides'
-version '1.0-SNAPSHOT'
+version '1.0.1'
 
 repositories {
     mavenCentral()
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'MainKt'
+publishing {
+    repositories {
+        // The target repository
+        maven {
+            // Choose whatever name you want
+            name = "graphql4k"
+            // The url of the repository, where the artifacts will be published
+            url = "https://maven.pkg.github.com/captchafree/graphql4k"
+            credentials {
+                // The credentials (described in the next section)
+                username = System.getenv("GH_USER")
+                password = System.getenv("GH_TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
     }
 }
 
