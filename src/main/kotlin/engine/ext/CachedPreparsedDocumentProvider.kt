@@ -53,7 +53,6 @@ class InMemoryPersistedQueryCache(
         onCacheMiss: PersistedQueryCacheMiss
     ): PreparsedDocumentEntry? {
         return cache.computeIfAbsent(persistedQueryId) {
-            println("Computing!")
             onCacheMiss.apply(executionInput.query)
         }
     }

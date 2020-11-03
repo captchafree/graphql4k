@@ -1,15 +1,10 @@
 package engine.ext
 
 import graphql.*
-import graphql.execution.ExecutionContext
-import graphql.execution.instrumentation.DocumentAndVariables
-import graphql.execution.instrumentation.InstrumentationContext
 import graphql.execution.instrumentation.InstrumentationState
 import graphql.execution.instrumentation.SimpleInstrumentation
-import graphql.execution.instrumentation.parameters.InstrumentationExecuteOperationParameters
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters
 import graphql.execution.instrumentation.parameters.InstrumentationFieldFetchParameters
-import graphql.language.Document
 import graphql.schema.DataFetcher
 import java.util.concurrent.CompletableFuture
 

@@ -22,7 +22,7 @@ data class GraphQLKit(
             val masterModule = if (modules.size == 1) {
                 modules.first()
             } else {
-                graphQLModule {
+                GraphQLBuilderModule() {
                     modules.forEach(::install)
                 }
             }
@@ -37,6 +37,7 @@ data class GraphQLKit(
         }
 
 
+        /*
         /**
          * Creates a new graphql module
          */
@@ -64,6 +65,6 @@ data class GraphQLKit(
         fun subscriptionModule(init: GraphQLTypeBuilder.() -> Unit): GraphQLTypeBuilderModule {
             return GraphQLTypeBuilderModule("Subscription", init)
         }
-
+        */
     }
 }

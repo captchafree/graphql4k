@@ -1,18 +1,18 @@
 import engine.ext.CostInstrumentation
-import engine.ext.InMemoryPersistedQueryCache
 import engine.ext.PrettyPrintSchemaPlugin
 import engine.main.*
 import engine.main.GraphQLKit.Companion.buildGraphQLKit
-import engine.main.GraphQLKit.Companion.graphQLModule
 import graphql.execution.instrumentation.tracing.TracingInstrumentation
-import graphql.execution.preparsed.persisted.ApolloPersistedQuerySupport
 import graphql.schema.DataFetcher
 import org.dataloader.BatchLoader
 import java.util.concurrent.CompletableFuture.supplyAsync
 
+object GlobalContext {
+    val moduleMappings: MutableMap<Any, MutableList<Any>> = mutableMapOf()
+}
 
 class SampleModule : GraphQLModule() {
-    override fun createModule() = graphQLModule {
+    override fun createModule() = GraphQLBuilderModule {
         query {
             field("test") { "success!" }
         }
@@ -30,12 +30,8 @@ class TestTypeModule : GraphQLTypeModule() {
 
 fun main() {
 
-    val queryModule = GraphQLKit.queryModule {
+    val queryModule = GraphQLTypeBuilderModule("Query") {
         field("pong") { "ping" }
-
-        /*field("ping") { env ->
-            env.getDataLoader<String, String>("ping").load(env.field.name)
-        }*/
 
         field("value") {
             supplyAsync {
@@ -49,9 +45,13 @@ fun main() {
         }
     }
 
-
-    val masterModule = graphQLModule {
+    val otherModule = GraphQLBuilderModule {
         install(queryModule)
+    }
+
+
+    val masterModule = GraphQLBuilderModule {
+        install(otherModule)
         install<SampleModule>()
 
         bindType<TestTypeModule>("Query")
@@ -68,6 +68,8 @@ fun main() {
         }
     }
 
+
+
     val options = GraphQLBuildingOptions.newOptions()
         .withPlugin(PrettyPrintSchemaPlugin())
         .build()
@@ -75,6 +77,7 @@ fun main() {
 
     val (graphqlBuilder, eiFactory) = buildGraphQLKit(options, masterModule)
 
+    /*
     val graphql = graphqlBuilder
         .preparsedDocumentProvider(ApolloPersistedQuerySupport(InMemoryPersistedQueryCache()))
         //.preparsedDocumentProvider(CachedPreparsedDocumentProvider())
@@ -109,5 +112,7 @@ fun main() {
     graphql.execute(input).toSpecification().also { println(it) }
     graphql.execute(input1).toSpecification().also { println(it) }
     graphql.execute(input1).toSpecification().also { println(it) }
+
+    */
 
 }

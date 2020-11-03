@@ -117,6 +117,11 @@ class GraphQLWiringBuilder(blueprintRegistry: GraphQLBlueprintRegistry) : GraphQ
 
 
     fun createGraphQLKit(): GraphQLWiringElementRegistry {
+
+        blueprintRegistry.mappings.forEach { t, u ->
+            println("$t: $u")
+        }
+
         return List(blueprintRegistry.elements.size) {
             blueprintRegistry.elements[it]
         }

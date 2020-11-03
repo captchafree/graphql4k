@@ -41,4 +41,6 @@ class GraphQLBlueprintRegistry {
         elements.add(element)
     }
 
+    val mappings: MutableMap<Any, Any> = mutableMapOf()
+
 }
