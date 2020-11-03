@@ -9,14 +9,21 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmErasure
 
 
-interface GraphQL4KModule {
-    fun install(blueprintRegistry: GraphQLBlueprintRegistry)
+abstract class GraphQL4KModule {
+
+    fun install(blueprintRegistry: GraphQLBlueprintRegistry) {
+        installModule(blueprintRegistry)
+    }
+
+    abstract fun installModule(blueprintRegistry: GraphQLBlueprintRegistry)
 }
 
 
-abstract class GraphQLModule : GraphQL4KModule {
-    override fun install(blueprintRegistry: GraphQLBlueprintRegistry) {
-        createModule().install(blueprintRegistry)
+abstract class GraphQLModule : GraphQL4KModule() {
+    override fun installModule(blueprintRegistry: GraphQLBlueprintRegistry) {
+        val module = createModule()
+        blueprintRegistry.mappings[this] = module
+        module.installModule(blueprintRegistry)
     }
 
     abstract fun createModule(): AbstractGraphQLModule<*>
@@ -81,32 +88,42 @@ abstract class GraphQLTypeModule {
     fun install(typeName: String, blueprintRegistry: GraphQLBlueprintRegistry) {
         val functions = getDataFetcherMethods()
 
-        GraphQLKit.typeModule(typeName) {
+        val module = GraphQLTypeBuilderModule(typeName) {
             functions.forEach { (name, df) ->
                 // Accurate field definitions only work when using the `type()` function
                 // Source code location lookup doesn't work for GraphQLTypeModules yet. Any datafetcher defined
                 // in one will direct you here.
                 field(name, df)
             }
-        }.install(blueprintRegistry)
+        }
+
+        blueprintRegistry.mappings[this] = module
+        module.installModule(blueprintRegistry)
     }
 }
 
 
 abstract class AbstractGraphQLModule<T : GraphQLBuilderBase>(
     private val init: T.() -> Unit
-) : GraphQL4KModule {
+) : GraphQL4KModule() {
 
-    override fun install(blueprintRegistry: GraphQLBlueprintRegistry) {
-        buildTarget(blueprintRegistry).apply(init)
+    override fun installModule(blueprintRegistry: GraphQLBlueprintRegistry) {
+        val module = buildTarget(blueprintRegistry)
+        module.apply(init)
     }
 
-    protected abstract fun buildTarget(context: GraphQLBlueprintRegistry): T
+    protected abstract fun buildTarget(blueprintRegistry: GraphQLBlueprintRegistry): T
 }
 
 class GraphQLBuilderModule(
-    init: GraphQLWiringBuilder.() -> Unit
+    private val init: GraphQLWiringBuilder.() -> Unit
 ) : AbstractGraphQLModule<GraphQLWiringBuilder>(init) {
+
+    override fun installModule(blueprintRegistry: GraphQLBlueprintRegistry) {
+        val module = buildTarget(blueprintRegistry)
+        module.apply(init)
+        blueprintRegistry.mappings[this] = module
+    }
 
     override fun buildTarget(blueprintRegistry: GraphQLBlueprintRegistry): GraphQLWiringBuilder {
         return GraphQLWiringBuilder(blueprintRegistry)
